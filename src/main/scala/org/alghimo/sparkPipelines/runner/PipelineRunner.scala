@@ -1,23 +1,19 @@
 package org.alghimo.sparkPipelines.runner
 
-import org.alghimo.sparkPipelines.{DataManager, HiveDataManager, Pipeline}
-import org.alghimo.sparkPipelines.Utils.withColor
+import org.alghimo.sparkPipelines.Pipeline
+import org.alghimo.sparkPipelines.dataManager.{DataManager, HiveDataManager}
 import org.apache.spark.sql.SparkSession
 
 /**
   * Created by D-KR99TU on 21/02/2017.
   */
 trait PipelineRunner extends CommandRunner {
+  def appName: String
   def createSparkSession() = {
     SparkSession
       .builder()
-      .appName("RSM Leads")
-      .master("yarn")
+      .appName(appName)
       .enableHiveSupport()
-      .config("spark.dynamicAllocation.enabled", false)
-      .config("spark.executor.instances", 16)
-      .config("spark.executor.cores", 2)
-      .config("spark.executor.memory", "14g")
       .getOrCreate()
   }
   def createDm(@transient spark: SparkSession): DataManager = HiveDataManager(spark)

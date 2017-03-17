@@ -1,7 +1,7 @@
 name := "spark-pipelines"
 organization := "org.alghimo"
 val sparkVersion = "2.1.0"
-version := s"spark_${sparkVersion}_0.2.4-SNAPSHOT"
+version := s"spark_${sparkVersion}_0.2.5-SNAPSHOT"
 publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.m2/repository")))
 resolvers += "Artima Maven Repository" at "http://repo.artima.com/releases"
 resolvers += "Local Maven" at Path.userHome.asFile.toURI.toURL + ".m2/repository"

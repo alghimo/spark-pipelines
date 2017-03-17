@@ -1,12 +1,12 @@
 package org.alghimo.sparkPipelines
 
 import org.apache.spark.sql.SparkSession
-import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, FunSuite}
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, FlatSpec, FunSuite}
 
 /**
   * Created by alghimo on 10/30/2016.
   */
-trait WithSharedSparkSession extends FunSuite with BeforeAndAfterEach with BeforeAndAfterAll {
+trait WithSharedSparkSession extends FlatSpec with BeforeAndAfterAll {
     @transient var spark: SparkSession = null
 
     override def beforeAll(): Unit = {

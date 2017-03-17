@@ -1,4 +1,4 @@
-package org.alghimo.sparkPipelines
+package org.alghimo.sparkPipelines.dataManager
 
 import org.apache.spark.sql.DataFrame
 

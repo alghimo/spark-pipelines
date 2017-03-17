@@ -1,6 +1,7 @@
 package org.alghimo.sparkPipelines
 
 import org.alghimo.sparkPipelines.Utils.withColor
+import org.alghimo.sparkPipelines.dataManager.DataManager
 import org.apache.spark.sql.SparkSession
 
 /**
@@ -13,12 +14,12 @@ import org.apache.spark.sql.SparkSession
   * @param spark
   */
 abstract class Stage
-    (val name: String, val description: Option[String] = None)
-    (val dataManager: DataManager, @transient val spark: SparkSession)
-    extends Runnable
-        with WithManagedData
-        with InputData
-        with OutputData {
+(val name: String, val description: Option[String] = None)
+(val dataManager: DataManager, @transient val spark: SparkSession)
+  extends Runnable
+    with WithManagedData
+    with InputData
+    with OutputData {
 
   protected val defaultIndentation = "\t"
 
@@ -27,7 +28,7 @@ abstract class Stage
     inputs.foreach(input => {
       val indent = prevIndent + indentation
       val table = dataManager.resourceName(input)
-      withColor(indent + table)
+      println(withColor(indent + table))
     })
   }
 

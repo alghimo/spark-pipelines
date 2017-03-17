@@ -1,6 +1,7 @@
 package org.alghimo.sparkPipelines
 
 import org.alghimo.sparkPipelines.Utils.withColor
+import org.alghimo.sparkPipelines.dataManager.DataManager
 import org.apache.spark.sql.SparkSession
 
 /**

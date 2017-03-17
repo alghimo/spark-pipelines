@@ -5,6 +5,6 @@ import org.apache.spark.sql.SparkSession
 /**
   * Used to mix in the Spark Session.
   */
-trait WitSparkSession {
+trait WithSparkSession {
     @transient def spark: SparkSession
 }
