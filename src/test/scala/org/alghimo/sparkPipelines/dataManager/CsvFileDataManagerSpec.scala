@@ -18,7 +18,7 @@ class CsvFileDataManagerSpec extends FlatSpec with Matchers with WithSharedSpark
       .withValue("files.file.with_filter.path", ConfigValueFactory.fromAnyRef(filePath))
       .withValue("files.file.with_select.path", ConfigValueFactory.fromAnyRef(filePath))
 
-    new CsvFileDataManager(spark, "files_test") {
+    new CsvFileDataManager(spark, Map("file_config" -> "files_test")) {
       override lazy val fileConfig = newConfig
     }
   }

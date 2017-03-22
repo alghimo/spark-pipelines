@@ -9,21 +9,17 @@ import org.apache.spark.sql.SparkSession
   */
 trait PipelineRunner extends CommandRunner {
   def appName: String
-  def createSparkSession() = {
+  def createSparkSession(options: Map[String, String]) = {
     SparkSession
       .builder()
       .appName(appName)
       .enableHiveSupport()
       .getOrCreate()
   }
-  def createDm(@transient spark: SparkSession): DataManager = HiveDataManager(spark)
+  def createDm(@transient spark: SparkSession, options: Map[String, String]): DataManager = HiveDataManager(spark, options)
 
-  def createPipeline(dm: DataManager, @transient spark: SparkSession): Pipeline
-  lazy val pipeline = {
-    val spark = createSparkSession()
-    val dm = createDm(spark)
-    createPipeline(dm, spark)
-  }
+  def createPipeline(dm: DataManager, @transient spark: SparkSession, options: Map[String, String]): Pipeline
+  var pipeline: Pipeline = _
 
   /**
     * Map where keys are all available actions, and each value is an ModelAction instance, containing:
@@ -43,6 +39,13 @@ trait PipelineRunner extends CommandRunner {
   def params: Map[String, String] = Map()
 
   def main(args: Array[String]): Unit = {
+    val options = CommandLineParser.parse(args)
+    pipeline = {
+      val spark = createSparkSession(options)
+      val dm = createDm(spark, options)
+      createPipeline(dm, spark, options)
+    }
+
     if (args.size < 1) {
       showUsage()
     } else {

@@ -6,6 +6,8 @@ import org.apache.spark.sql.DataFrame
   * Generic interface for DataManager implementations
   */
 trait DataManager {
+  def options: Map[String, String]
+
   def hasResource(key: String): Boolean
 
   def resourceName(key: String): String

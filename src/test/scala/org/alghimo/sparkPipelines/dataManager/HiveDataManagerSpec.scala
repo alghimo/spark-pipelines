@@ -1,5 +1,8 @@
 package org.alghimo.sparkPipelines.dataManager
 
+import java.io.File
+
+import com.typesafe.config.ConfigFactory
 import org.alghimo.sparkPipelines.{IdRow, Table2Row, WithSharedSparkSession}
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -7,7 +10,7 @@ import org.scalatest.{FlatSpec, Matchers}
   * Created by alghimo on 10/30/2016.
   */
 class HiveDataManagerSpec extends FlatSpec with Matchers with WithSharedSparkSession {
-  lazy val dataManager: HiveDataManager = new HiveDataManager(spark, "hive_test")
+  lazy val dataManager: HiveDataManager = new HiveDataManager(spark, Map("hive_resource_name" -> "/hive_test.conf"))
 
   override def beforeAll(): Unit = {
     super.beforeAll()
@@ -19,6 +22,7 @@ class HiveDataManagerSpec extends FlatSpec with Matchers with WithSharedSparkSes
       .write
       .mode("overwrite")
       .saveAsTable("test.table1")
+
     val table2Data = (1 to 5).map{value => Table2Row(value, s"${value}_str", value * value)}
     spark
       .createDataFrame(table2Data)
@@ -84,5 +88,14 @@ class HiveDataManagerSpec extends FlatSpec with Matchers with WithSharedSparkSes
     val result = dataManager.get("table3")
     result.count should be(1)
     result.as[Int].first should be(7)
+  }
+
+  it should "load the config from a path when provided" in {
+    val resource = getClass.getResource("/hive_test2.conf").getFile
+    /*val resFile = new File(resource)
+    val tmpConfig = ConfigFactory.parseFile(resFile)
+    val configpath = getClass.getResource("/hive_test2.conf").toURI.toString*/
+    val dataManager: HiveDataManager = new HiveDataManager(spark, Map("hive_config" -> resource))
+    dataManager.resourceName("some_table") shouldBe "foo.my_table"
   }
 }

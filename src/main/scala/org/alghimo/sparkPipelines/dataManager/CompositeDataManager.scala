@@ -5,7 +5,7 @@ import org.apache.spark.sql.DataFrame
 /**
   * Created by D-KR99TU on 21/02/2017.
   */
-class CompositeDataManager(dataManagers: Seq[DataManager], dmStrategy: (Seq[DataManager], String) => DataManager = CompositeDataManager.headDataManagerStrategy) extends DataManager {
+class CompositeDataManager(dataManagers: Seq[DataManager], override val options: Map[String, String] = Map(), dmStrategy: (Seq[DataManager], String) => DataManager = CompositeDataManager.headDataManagerStrategy) extends DataManager {
 
   def hasResource(key: String): Boolean = {
     dataManagers.map(_.hasResource(key)).max
@@ -23,7 +23,6 @@ class CompositeDataManager(dataManagers: Seq[DataManager], dmStrategy: (Seq[Data
     * @return DataFrame
     */
   def get(key: String): DataFrame = {
-    println(s"Getting key ${key}")
     val dm = dmForKey(key)
 
     dm.get(key)
@@ -47,10 +46,10 @@ class CompositeDataManager(dataManagers: Seq[DataManager], dmStrategy: (Seq[Data
 }
 
 object CompositeDataManager {
-  def hiveAndCsvDataManager(@transient spark: org.apache.spark.sql.SparkSession, fileConfResource: String = "file", hiveConfResource: String = "hive"): CompositeDataManager = {
-    val csvDataManager = CsvFileDataManager(spark, fileConfResource)
-    val hiveDataManager = HiveDataManager(spark, hiveConfResource)
-    new CompositeDataManager(Seq(hiveDataManager, csvDataManager), hiveDataManagerStrategy)
+  def hiveAndCsvDataManager(@transient spark: org.apache.spark.sql.SparkSession, options: Map[String, String]): CompositeDataManager = {
+    val csvDataManager = CsvFileDataManager(spark, options)
+    val hiveDataManager = HiveDataManager(spark, options)
+    new CompositeDataManager(Seq(hiveDataManager, csvDataManager), options, hiveDataManagerStrategy)
   }
 
   def headDataManagerStrategy(dms: Seq[DataManager], key: String): DataManager = {

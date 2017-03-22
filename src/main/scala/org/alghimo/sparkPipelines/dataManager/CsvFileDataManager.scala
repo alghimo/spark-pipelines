@@ -8,7 +8,7 @@ import scala.collection.mutable
 /**
   * Created by D-KR99TU on 21/02/2017.
   */
-class CsvFileDataManager(@transient val spark: org.apache.spark.sql.SparkSession, override val confResource: String = "file") extends DataManager with FileConfig {
+class CsvFileDataManager(@transient val spark: org.apache.spark.sql.SparkSession, override val options: Map[String, String]) extends DataManager with FileConfig {
   import CsvFileDataManager._
 
   def hasResource(key: String): Boolean = {
@@ -46,7 +46,7 @@ class CsvFileDataManager(@transient val spark: org.apache.spark.sql.SparkSession
     val df = spark
       .read
       .options(readOptions)
-      .csv(fileConfig.getString(s"files.${key}.path"))
+      .csv(resourceName(key))
 
     val filteredDf = if (filter.isEmpty) {
       df
@@ -80,7 +80,7 @@ class CsvFileDataManager(@transient val spark: org.apache.spark.sql.SparkSession
 
   private def getOptions(key: String) = {
     val tmpOptions: mutable.Map[String, String] = mutable.Map(
-      "sep"   -> defaultFieldSeparator,
+      "sep"         -> defaultFieldSeparator,
       "header"      -> defaultHeaders,
       "inferSchema" -> defaultInferSchema,
       "mode"        -> defaultSaveMode
@@ -104,10 +104,10 @@ object CsvFileDataManager {
   final protected val defaultSaveMode = "overwrite"
 
   def apply(@transient spark: org.apache.spark.sql.SparkSession): CsvFileDataManager = {
-    new CsvFileDataManager(spark, confResource = "file")
+    new CsvFileDataManager(spark, options = Map())
   }
 
-  def apply(@transient spark: org.apache.spark.sql.SparkSession, confResource: String ): CsvFileDataManager = {
-    new CsvFileDataManager(spark, confResource)
+  def apply(@transient spark: org.apache.spark.sql.SparkSession, options: Map[String, String]): CsvFileDataManager = {
+    new CsvFileDataManager(spark, options)
   }
 }

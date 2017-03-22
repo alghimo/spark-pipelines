@@ -7,9 +7,11 @@ import scala.collection.JavaConverters._
 /**
   * Concrete implementation of a DataManager that handles reading and writing to Hive.
   * @param spark
-  * @param confResource Set to "hive" by default. You can point it to wherever you have your config file.
+  * @param options Map of Options, available options are:
+  * "db" -> Will replace the 'db' value of any table included in "pipeline.replaceable_tables" config.
+  * "table_prefix" -> Will prepend the 'table_prefix' to the name of any table included in "pipeline.replaceable_tables" config.
   */
-class HiveDataManager(@transient val spark: org.apache.spark.sql.SparkSession, override val confResource: String = "hive") extends DataManager with HiveConfig {
+class HiveDataManager(@transient val spark: org.apache.spark.sql.SparkSession, override val options: Map[String,String] = Map()) extends DataManager with HiveConfig {
   def hasResource(key: String): Boolean = {
     hiveConfig.hasPath(s"tables.${key}")
   }
@@ -71,17 +73,17 @@ class HiveDataManager(@transient val spark: org.apache.spark.sql.SparkSession, o
 
         df
             .write
-            .mode("overwrite")
+            .mode(mode)
             .saveAsTable(s"${db}.${table}")
     }
 }
 
 object HiveDataManager {
   def apply(@transient spark: org.apache.spark.sql.SparkSession): HiveDataManager = {
-    new HiveDataManager(spark, confResource = "hive")
+    new HiveDataManager(spark, Map())
   }
 
-  def apply(@transient spark: org.apache.spark.sql.SparkSession, confResource: String): HiveDataManager = {
-    new HiveDataManager(spark, confResource)
+  def apply(@transient spark: org.apache.spark.sql.SparkSession, options: Map[String, String]): HiveDataManager = {
+    new HiveDataManager(spark, options)
   }
 }

@@ -9,7 +9,7 @@ import org.scalatest.{FlatSpec, Matchers}
   */
 class CompositeDataManagerSpec  extends FlatSpec with Matchers with WithSharedSparkSession {
   def createDataManager(strategy: (Seq[DataManager], String) => DataManager) = {
-    val hiveDataManager: HiveDataManager = new HiveDataManager(spark, "composite_hive_test")
+    val hiveDataManager: HiveDataManager = new HiveDataManager(spark, Map("hive_config" -> "composite_hive_test"))
     val fileDataManager: CsvFileDataManager = {
       val originalConfig = ConfigFactory.load("composite_files_test")
       val filePath = getClass.getResource("/files/test_file.csv").getPath
@@ -18,11 +18,11 @@ class CompositeDataManagerSpec  extends FlatSpec with Matchers with WithSharedSp
         .withValue("files.key1.path", ConfigValueFactory.fromAnyRef(filePath))
         .withValue("files.key3.path", ConfigValueFactory.fromAnyRef(file2Path))
 
-      new CsvFileDataManager(spark, "composite_files_test") {
+      new CsvFileDataManager(spark, Map("file_config" -> "composite_files_test")) {
         override lazy val fileConfig = newConfig
       }
     }
-    new CompositeDataManager(Seq(fileDataManager, hiveDataManager), strategy)
+    new CompositeDataManager(Seq(fileDataManager, hiveDataManager), Map(), strategy)
   }
 
   override def beforeAll(): Unit = {

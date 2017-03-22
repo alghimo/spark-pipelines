@@ -15,37 +15,37 @@ import org.apache.spark.sql.SparkSession
   */
 class Pipeline(override val name: String, val stages: Array[Stage], override val description: Option[String] = None)
               (override val dataManager: DataManager, @transient override val spark: SparkSession)
-    extends Stage(name, description)(dataManager, spark) {
+  extends Stage(name, description)(dataManager, spark) {
 
-    override def inputs = {
-        stages
-            .map(_.inputs)
-            .reduce(_ ++ _)
-    }
+  override def inputs = {
+    stages
+      .map(_.inputs)
+      .reduce(_ ++ _)
+  }
 
-    override def outputs = {
-        stages
-            .map(_.outputs)
-            .reduce(_ ++ _)
-    }
+  override def outputs = {
+    stages
+      .map(_.outputs)
+      .reduce(_ ++ _)
+  }
 
-    /**
-      * @todo: Use logging
-      */
-    def run(): Unit = {
-        stages.foreach{stage => {
-            println(s"Running stage '${stage.name}'")
-            stage.run
-        }}
-    }
+  /**
+    * @todo: Use logging
+    */
+  def run(): Unit = {
+    stages.foreach{stage => {
+      println(s"Running stage '${withColor(stage.name)}'")
+      stage.run
+    }}
+  }
 
-    override def validateInput() = {
-        stages.map(_.validateInput).reduce(_ & _)
-    }
+  override def validateInput() = {
+    stages.map(_.validateInput).reduce(_ & _)
+  }
 
-    override def validateOutput() = {
-        stages.map(_.validateOutput).reduce(_ & _)
-    }
+  override def validateOutput() = {
+    stages.map(_.validateOutput).reduce(_ & _)
+  }
 
   override def showInputs(prevIndent: String , indentation: String) = {
     println(s"${prevIndent}[Pipeline ${withColor(name)} inputs]:")

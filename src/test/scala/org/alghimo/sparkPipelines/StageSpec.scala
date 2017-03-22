@@ -7,7 +7,7 @@ import org.scalatest.{FlatSpec, Matchers}
   * Created by alghimo on 10/30/2016.
   */
 class StageSpec extends FlatSpec with Matchers with WithSharedSparkSession {
-  lazy val dataManager: HiveDataManager = new HiveDataManager(spark, "hive_test")
+  lazy val dataManager: HiveDataManager = new HiveDataManager(spark, Map("hive_config" -> "hive_test"))
 
   override def beforeAll(): Unit = {
     super.beforeAll()
