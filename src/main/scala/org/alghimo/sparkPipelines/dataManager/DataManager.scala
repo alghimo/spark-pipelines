@@ -12,12 +12,20 @@ trait DataManager {
 
   def resourceName(key: String): String
 
+  def resourceExists(key: String): Boolean = true
+
   /**
     * Returns a DataFrame for the provided key.
     * @param key
     * @return DataFrame
     */
   def get(key: String): DataFrame
+
+  def getIfExists(key: String): Option[DataFrame] = if (resourceExists(key)) {
+    Some(get(key))
+  } else {
+    None
+  }
 
   /**
     * Writes the DataFrame to the provided key. Write mode can be one of the standard spark write modes.

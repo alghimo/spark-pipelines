@@ -1,5 +1,6 @@
 package org.alghimo.sparkPipelines
 
+import com.typesafe.config.Config
 import org.alghimo.sparkPipelines.Utils.withColor
 import org.alghimo.sparkPipelines.dataManager.DataManager
 import org.apache.spark.sql.SparkSession
@@ -15,7 +16,7 @@ import org.apache.spark.sql.SparkSession
   */
 abstract class Stage
 (val name: String, val description: Option[String] = None)
-(val dataManager: DataManager, @transient val spark: SparkSession)
+(val dataManager: DataManager, @transient val spark: SparkSession, config: Config)
   extends Runnable
     with WithManagedData
     with InputData
